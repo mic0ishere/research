@@ -23,8 +23,6 @@ export default async function handler(req, res) {
 
   const { body: links } = req.body;
 
-  console.log(links);
-
   await dbConnect();
   let response = [];
 
