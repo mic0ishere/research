@@ -1,6 +1,6 @@
 import { authOptions } from "../auth/[...nextauth]";
 import { unstable_getServerSession } from "next-auth/next";
-import Link, { getNextId } from "../../../lib/linkModel";
+import Link from "../../../lib/linkModel";
 import dbConnect from "../../../lib/dbConnect";
 
 /**
@@ -21,32 +21,20 @@ export default async function handler(req, res) {
     return;
   }
 
-  const { url, title, notes, tags, priority } = req.body;
+  const { id } = req.query;
 
-  if (!url) {
+  if (!id) {
     res.status(400).json({ error: "Missing required fields" });
     return;
   }
 
-  let editedTitle = title;
-  if (!editedTitle) {
-    const urlObj = new URL(url);
-    editedTitle = urlObj.hostname + urlObj.pathname;
-  }
-
   await dbConnect();
-  const id = await getNextId();
+  const link = await Link.findOneAndUpdate(
+    { id },
+    {
+        archived: true,
+    }
+  );
 
-  const link = await Link.create({
-    id,
-    url,
-    title: editedTitle,
-    notes,
-    tags,
-    createdAt: new Date(),
-    archived: false,
-    priority: priority || 0,
-  });
-
-  res.status(201).json(link);
+  res.status(200).json(link);
 }

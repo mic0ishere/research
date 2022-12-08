@@ -1,6 +1,7 @@
 import { authOptions } from "../auth/[...nextauth]";
 import { unstable_getServerSession } from "next-auth/next";
 import Link from "../../../lib/linkModel";
+import dbConnect from "../../../lib/dbConnect";
 
 /**
  * @param {import('next/server').NextRequest} req
@@ -20,13 +21,14 @@ export default async function handler(req, res) {
     return;
   }
 
-  const { id } = req.body;
+  const { id } = req.query;
 
   if (!id) {
     res.status(400).json({ error: "Missing required fields" });
     return;
   }
 
+  await dbConnect();
   const link = await Link.findOneAndDelete({ id });
 
   res.status(200).json(link);

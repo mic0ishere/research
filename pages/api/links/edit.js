@@ -1,6 +1,7 @@
 import { authOptions } from "../auth/[...nextauth]";
 import { unstable_getServerSession } from "next-auth/next";
 import Link from "../../../lib/linkModel";
+import dbConnect from "../../../lib/dbConnect";
 
 /**
  * @param {import('next/server').NextRequest} req
@@ -15,7 +16,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  if (req.method !== "PATCH") {
+  if (req.method !== "POST") {
     res.status(405).json({ error: "Method not allowed" });
     return;
   }
@@ -27,11 +28,18 @@ export default async function handler(req, res) {
     return;
   }
 
+  let editedTitle = title;
+  if (!title) {
+    const urlObj = new URL(url);
+    editedTitle = urlObj.hostname + urlObj.pathname;
+  }
+
+  await dbConnect();
   const link = await Link.findOneAndUpdate(
     { id },
     {
       url,
-      title,
+      title: editedTitle,
       notes,
       tags,
       archived,

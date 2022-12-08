@@ -21,32 +21,40 @@ export default async function handler(req, res) {
     return;
   }
 
-  const { url, title, notes, tags, priority } = req.body;
+  const { body: links } = req.body;
 
-  if (!url) {
-    res.status(400).json({ error: "Missing required fields" });
-    return;
-  }
-
-  let editedTitle = title;
-  if (!editedTitle) {
-    const urlObj = new URL(url);
-    editedTitle = urlObj.hostname + urlObj.pathname;
-  }
+  console.log(links);
 
   await dbConnect();
-  const id = await getNextId();
+  let response = [];
 
-  const link = await Link.create({
-    id,
-    url,
-    title: editedTitle,
-    notes,
-    tags,
-    createdAt: new Date(),
-    archived: false,
-    priority: priority || 0,
-  });
+  let id = await getNextId();
+  for (const link of links) {
+    const { url, title, notes } = link;
+    if (!url) {
+      res.status(400).json({ error: "Missing required fields" });
+      return;
+    }
 
-  res.status(201).json(link);
+    let editedTitle = title;
+    if (!editedTitle) {
+      const urlObj = new URL(url);
+      editedTitle = urlObj.hostname + urlObj.pathname;
+    }
+
+    const newLink = await Link.create({
+      id,
+      url,
+      title: editedTitle,
+      notes,
+      createdAt: new Date(),
+      priority: 0,
+    });
+
+    id++;
+
+    response.push(newLink);
+  }
+
+  res.status(201).json(response);
 }

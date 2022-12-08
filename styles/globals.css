@@ -16,3 +16,18 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.md-container {
+  max-width: 800px;
+  padding-top: 2rem;
+}
+
+.cntr-footer {
+  margin-bottom: 15px;
+  text-align: center;
+  justify-content: center;
+}
+
+.pe-pointer {
+  cursor: pointer;
+}
