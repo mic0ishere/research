@@ -16,8 +16,7 @@ I don't plan on hosting a public version on it, but if you want to self-host it,
 
 1. Fill-in `.env` with credentials for your database and GitHub OAuth app
    - If you want to use other login method than GitHub, modify the `/pages/api/auth/[...nextauth].js` file
-2. Install dependencies using your favourite package manager
-3. Deploy to your platform of choice (I recommend Vercel)
+2. Deploy to your platform of choice (I recommend Vercel)
 
 ## Contributing
 
